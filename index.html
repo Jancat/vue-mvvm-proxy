@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue MVVM (Proxy)</title>
+  </head>
+  <style>
+    .bg-color {
+      background: lightskyblue;
+    }
+
+    .size {
+      font-size: 20px;
+    }
+  </style>
+  <body>
+    <div id="mvvm-app">
+      <input type="text" v-model="firstInput" />
+      <input type="text" v-model="nested.secondInput" />
+      <p v-class="className" class="bg-color">
+        {{ firstInput }}
+        <span v-text="nested.secondInput"></span>
+      </p>
+      <p>{{ concatInput }}</p>
+      <p v-html="htmlStr"></p>
+      <button class="size" v-on:click="changeSecondInputModel">
+        changeSecondInputModel
+      </button>
+    </div>
+
+    <script type="module">
+      import MVVM from './MVVM.js'
+      const vm = new MVVM({
+        el: '#mvvm-app',
+        data: {
+          firstInput: 'hello ',
+          nested: {
+            secondInput: 'World !',
+          },
+          htmlStr: '<span style="color: red;">v-html text</span>',
+          className: 'size',
+        },
+
+        computed: {
+          concatInput() {
+            return this.firstInput + this.nested.secondInput
+          },
+        },
+
+        methods: {
+          changeSecondInputModel(e) {
+            const randomStrArr = ['one', 'two', 'three']
+            this.nested.secondInput = randomStrArr[parseInt(Math.random() * 3)]
+            this.log('log')
+          },
+          log(arg) {
+            console.log('this.nested.secondInput', this.nested.secondInput)
+            console.log(arg + ' this.$options ', this.$options)
+          },
+        },
+      })
+
+      vm.$watch('nested.secondInput', (val, oldVal) => {
+        console.log(`nested.secondInput change from ${oldVal} to ${val}`)
+      })
+    </script>
+  </body>
+</html>
